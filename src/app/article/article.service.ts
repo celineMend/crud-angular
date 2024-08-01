@@ -8,49 +8,56 @@ import { Article } from './article';
 })
 export class ArticleService {
 
-  private apiUrl = 'https://jsonplaceholder.typicode.com';
+  private apiUrl = 'https://jsonplaceholder.typicode.com/posts'; // Correction de l'URL
 
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
     })
   };
-  create: any;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
   // Get all articles
-  getAll():Observable<any>{
-    return this.httpClient.get(this.apiUrl+'/posts/')
-    .pipe(
-      catchError(this.errorHandler)
-    );
+  getAll(): Observable<Article[]> {
+    return this.http.get<Article[]>(this.apiUrl)
+      .pipe(
+        catchError(this.errorHandler)
+      );
   }
 
   // Get a single article by ID
   getArticle(id: number): Observable<Article> {
-    return this.httpClient.get<Article>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<Article>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.errorHandler)
+    );
+  }
+  getArticleById(id: number): Observable<Article> {
+    return this.http.get<Article>(`http://localhost:4200/api/articles/${id}`).pipe(
+      catchError(error => {
+        console.error('Erreur lors de la récupération des détails de l\'article', error);
+        return throwError(() => new Error('Une erreur est survenue lors de la récupération des détails de l\'article'));
+      })
     );
   }
 
   // Create a new article
   createArticle(article: Article): Observable<Article> {
-    return this.httpClient.post<Article>(this.apiUrl, article, this.httpOptions).pipe(
+    return this.http.post<Article>(this.apiUrl, article, this.httpOptions).pipe(
       catchError(this.errorHandler)
     );
   }
 
   // Update an existing article
   updateArticle(id: number, article: Article): Observable<Article> {
-    return this.httpClient.put<Article>(`${this.apiUrl}/${id}`, article, this.httpOptions).pipe(
+    return this.http.put<Article>(`${this.apiUrl}/${id}`, article, this.httpOptions).pipe(
       catchError(this.errorHandler)
     );
   }
 
   // Delete an article
   delete(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.errorHandler)
     );
   }
