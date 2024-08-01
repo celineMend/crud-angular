@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router'; // Importez Router
 import { ArticleService } from '../article/article.service';
 import { Article } from '../article/article';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -19,16 +19,15 @@ export class ArticleListComponent implements OnInit {
   isModalOpen = false;
   isEditMode = false;
   currentArticleId: number | null = null;
-  selectedArticle: Article | null = null; // Pour stocker les détails de l'article
 
   constructor(
     private articleService: ArticleService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadArticles();
-
     this.articleForm = this.fb.group({
       title: ['', Validators.required],
       body: ['', Validators.required]
@@ -36,7 +35,7 @@ export class ArticleListComponent implements OnInit {
   }
 
   loadArticles(): void {
-    this.articleService.getAll().subscribe((data: Article[]) => {
+    this.articleService.getAll().subscribe(data => {
       this.articles = data;
     });
   }
@@ -44,12 +43,8 @@ export class ArticleListComponent implements OnInit {
   openModal(editMode: boolean = false, article?: Article): void {
     this.isModalOpen = true;
     this.isEditMode = editMode;
-
     if (editMode && article) {
-      this.articleForm.patchValue({
-        title: article.title,
-        body: article.body
-      });
+      this.articleForm.patchValue(article);
       this.currentArticleId = article.id;
     } else {
       this.articleForm.reset();
@@ -57,25 +52,14 @@ export class ArticleListComponent implements OnInit {
     }
   }
 
-  openDetailModal(article: Article): void {
-    this.articleService.getArticleById(article.id).subscribe(
-      (data: Article) => {
-        this.selectedArticle = data;
-        this.isModalOpen = true;
-        this.isEditMode = false; // Mode lecture seule
-      },
-      (error) => {
-        console.error('Erreur lors de la récupération des détails de l\'article', error);
-        alert(`Erreur lors de la récupération des détails de l'article: ${error.message || 'Une erreur est survenue. Veuillez réessayer plus tard.'}`);
-      }
-    );
+  openDetail(article: Article): void {
+    this.router.navigate(['/articles', article.id]);
   }
 
   closeModal(): void {
     this.isModalOpen = false;
     this.isEditMode = false;
     this.currentArticleId = null;
-    this.selectedArticle = null; // Réinitialiser les détails de l'article
   }
 
   get f() {
@@ -89,34 +73,22 @@ export class ArticleListComponent implements OnInit {
         this.articleService.updateArticle(this.currentArticleId, article).subscribe(
           (res: Article) => {
             alert("Article mis à jour avec succès ☺");
-            this.articleForm.reset();
-            const index = this.articles.findIndex(a => a.id === this.currentArticleId);
-            if (index !== -1) {
-              this.articles[index] = res;
-            }
+            this.loadArticles(); // Recharger la liste après la mise à jour
             this.closeModal();
           },
-          (error) => {
-            console.error('Erreur lors de la mise à jour de l\'article', error);
-            alert(`Erreur lors de la mise à jour de l'article: ${error.message || 'Une erreur est survenue. Veuillez réessayer plus tard.'}`);
-          }
+          error => alert(`Erreur lors de la mise à jour de l'article: ${error.message || 'Une erreur est survenue.'}`)
         );
       } else {
         this.articleService.createArticle(article).subscribe(
           (res: Article) => {
             alert("Article ajouté avec succès ☺");
-            this.articleForm.reset();
             this.articles.unshift(res);
             this.closeModal();
           },
-          (error) => {
-            console.error('Erreur lors de l\'ajout de l\'article', error);
-            alert(`Erreur lors de l'ajout de l'article: ${error.message || 'Une erreur est survenue. Veuillez réessayer plus tard.'}`);
-          }
+          error => alert(`Erreur lors de l'ajout de l'article: ${error.message || 'Une erreur est survenue.'}`)
         );
       }
     } else {
-      console.error('Le formulaire est invalide');
       alert('Veuillez remplir correctement le formulaire.');
     }
   }
@@ -128,10 +100,7 @@ export class ArticleListComponent implements OnInit {
           this.articles = this.articles.filter(article => article.id !== id);
           alert('Article supprimé avec succès');
         },
-        (error) => {
-          console.error('Erreur lors de la suppression de l\'article', error);
-          alert(`Erreur lors de la suppression de l'article: ${error.message || 'Une erreur est survenue. Veuillez réessayer plus tard.'}`);
-        }
+        error => alert(`Erreur lors de la suppression de l'article: ${error.message || 'Une erreur est survenue.'}`)
       );
     }
   }

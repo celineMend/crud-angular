@@ -1,1 +1,24 @@
-<p>article-details works!</p>
+<div class="article-details">
+  <h1>Article Details</h1>
+
+  <!-- Article Details -->
+  <div *ngIf="article">
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.body }}</p>
+  </div>
+
+  <!-- Display a message if the article is not found -->
+  <div *ngIf="!article">
+    <p>Article not found.</p>
+  </div>
+
+  <!-- Display comments section -->
+  <!-- <div class="comments-section">
+    <h3>Comments</h3>
+    <ul>
+      <li *ngFor="let comment of comments">
+        <p><strong>{{ comment.author }}:</strong> {{ comment.text }}</p>
+      </li>
+    </ul>
+  </div> -->
+</div>

@@ -15,7 +15,7 @@
         <td>{{ article.title }}</td>
         <td>{{ article.body }}</td>
         <td>
-          <button (click)="openDetailModal(article)" class="btn btn-info">Voir Détail</button>
+          <button (click)="openDetail(article)" class="btn btn-info">Voir Détail</button>
           <button (click)="openModal(true, article)" class="btn btn-warning">Modifier</button>
           <button class="btn btn-danger" type="button" (click)="deleteArticle(article.id)">Supprimer</button>
         </td>

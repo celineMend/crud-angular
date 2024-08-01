@@ -1,0 +1,40 @@
+.article-details {
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.comments-section {
+  margin-top: 20px;
+}
+
+.comments-section h3 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.comments-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.comments-section li {
+  margin-bottom: 10px;
+}
+
+.comments-section li p {
+  margin: 0;
+}
