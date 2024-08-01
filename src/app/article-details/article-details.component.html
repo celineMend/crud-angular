@@ -13,12 +13,19 @@
   </div>
 
   <!-- Display comments section -->
-  <!-- <div class="comments-section">
+  <div class="comments-section" *ngIf="comments.length > 0">
     <h3>Comments</h3>
     <ul>
       <li *ngFor="let comment of comments">
-        <p><strong>{{ comment.author }}:</strong> {{ comment.text }}</p>
+        <p><strong>{{ comment.name }}:</strong> {{ comment.body }}</p>
+        <p><em>{{ comment.body }}</em></p>
+        <p><em>{{comment.email}}</em></p>
       </li>
     </ul>
-  </div> -->
+  </div>
+
+  <!-- Display a message if there are no comments -->
+  <div *ngIf="comments.length === 0">
+    <p>No comments available.</p>
+  </div>
 </div>
